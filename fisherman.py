@@ -2,23 +2,23 @@
 
 from selenium.webdriver import Firefox, FirefoxOptions
 from time import sleep
-from argparse import ArgumentParser, MetavarTypeHelpFormatter
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from requests import get
 from re import findall
 from form_text import *
+from logo import *
 
 module_name = 'FisherMan: Extract information from facebook profiles'
-__version__ = '1.0'
+__version__ = "1.1"
 
 
 class Fisher:
     def __init__(self):
         parser = ArgumentParser(description=f'{module_name} (Version {__version__})',
-                                formatter_class=MetavarTypeHelpFormatter)
+                                formatter_class=RawDescriptionHelpFormatter)
 
-        parser.add_argument('usr', action='store', metavar='USERS', dest='usr',
-                            help='defines one or more users for the search',
-                            nargs='+')
+        parser.add_argument('users', action='store', nargs='+',
+                            help='defines one or more users for the search', )
 
         parser.add_argument('--email', action='store', metavar='EMAIL', dest='email',
                             required=False,
@@ -39,14 +39,17 @@ class Fisher:
 
         self.args = parser.parse_args()
         self.site = 'https://facebook.com/'
-        self.usrs = self.args.usr
+        self.usrs = self.args.users
         self.__fake_email__ = 'submarino.sub.aquatico@outlook.com'
         self.__password__ = '0cleptomaniaco0'
         self.data = []
 
-    def update(self):
+        print(color_text('white', name))
+
+    @staticmethod
+    def update():
         try:
-            r = get("https://raw.githubusercontent.com/Godofcoffe/Butterfly/main/butterfly.py")
+            r = get("https://raw.githubusercontent.com/Godofcoffe/FisherMan/main/fisherman.py")
 
             remote_version = str(findall('__version__ = "(.*)"', r.text)[0])
             local_version = __version__
@@ -54,7 +57,7 @@ class Fisher:
             if remote_version != local_version:
                 print(color_text('yellow', "Update Available!\n" +
                                  f"You are running version {local_version}. Version {remote_version} "
-                                 f"is available at https://github.com/Godofcoffe/Butterfly"))
+                                 f"is available at https://github.com/Godofcoffe/FisherMan"))
         except Exception as error:
             print(color_text('red', f"A problem occured while checking for an update: {error}"))
 
@@ -62,10 +65,10 @@ class Fisher:
         return self.data
 
     def run(self):
-        if self.args.browser:
+        if not self.args.browser:
             options = FirefoxOptions()
             options.add_argument("--headless")
-            navegador = Firefox(firefox_options=options)
+            navegador = Firefox(options=options)
         else:
             navegador = Firefox()
         navegador.get(self.site)
@@ -76,17 +79,18 @@ class Fisher:
         classes = ['ii04i59q', 'a3bd9o3v', 'jq4qci2q', 'oo9gr5id',
                    'dati1w0a', 'tu1s4ah4', 'f7vcsfb0', 'discj3wi']
 
-        print('logging in...')
         email.clear()
         pwd.clear()
-        if self.args.email == self.__fake_email__ and self.args.pwd == self.__password__:
+        if self.args.email is None or self.args.pwd is None:
+            print(f'logging into the account: {self.__fake_email__}:{self.__password__}')
             email.send_keys(self.__fake_email__)
             pwd.send_keys(self.__password__)
         else:
+            print(f'logging into the account: {self.args.email}:{self.args.pwd}')
             email.send_keys(self.args.email)
             pwd.send_keys(self.args.pwd)
         ok.click()
-        sleep(2)
+        sleep(1)
         for usr in self.usrs:
             print(f'Coming in {self.site + usr}')
             navegador.get(f'{self.site + usr}/about')
@@ -104,3 +108,14 @@ class Fisher:
                     else:
                         continue
                 sleep(1)
+
+
+fs = Fisher()
+fs.update()
+fs.run()
+stuff = fs.get_data()
+print()
+print(color_text('green', 'Information found:'))
+print('-' * 60)
+for st in stuff[6:]:
+    print(st)
