@@ -2,7 +2,7 @@
 
 from selenium.webdriver import Firefox, FirefoxOptions
 from time import sleep
-from argparse import ArgumentParser, RawDescriptionHelpFormatter, ArgumentError
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from requests import get
 from re import findall
 from form_text import *
@@ -73,8 +73,8 @@ class Fisher:
 
     def upload_txt_file(self):
         try:
-            with open(self.args.txt, 'r') as file:
-                users_txt = file.readlines()
+            with open(self.args.txt, 'r') as txt:
+                users_txt = txt.readlines()
         except Exception as error:
             print(color_text('red', f'An error has occurred: {error}'))
         else:
@@ -155,14 +155,15 @@ fs.update()
 fs.run()
 stuff = fs.get_data()
 print()
-print(color_text('green', 'Information found:'))
-print('-' * 60)
 if fs.args.out:
     with open('output.txt', 'w+') as file:
-        for usr in fs.args.USERSNAMES:
-            file.write(usr)
+        for user in fs.args.USERSNAMES:
+            file.write(user)
             for st in stuff[6:]:
                 file.write(st)
+    print(f'[ {color_text("green", "+")} ] SUCESS')
 else:
+    print(color_text('green', 'Information found:'))
+    print('-' * 60)
     for st in stuff[6:]:
         print(st)
