@@ -20,8 +20,8 @@ class Fisher:
         parser.add_argument('USERSNAMES', action='store', nargs='+',
                             help='defines one or more users for the search')
 
-        parser.add_argument('--verbose', '-v', action='store_true', required=False, dest='verb',
-                            help='It shows in detail the data search process')
+        parser.add_argument('--version', action='version',
+                            version=f'%(prog)s {__version__}', help='Shows the current version of the program.')
 
         parser.add_argument('--email', action='store', metavar='EMAIL', dest='email',
                             required=False,
@@ -37,14 +37,14 @@ class Fisher:
                             required=False,
                             help='Opens the browser / bot')
 
-        parser.add_argument('--use-txt', action='store_true', required=False, dest='txt', metavar='FILE',
-                            help='Uses a .txt file to run in the script')
+        parser.add_argument('--use-txt', action='store', required=False, dest='txt', metavar='TXT_FILE',
+                            help='Replaces the USERSNAMES parameter with a user list in a txt')
 
         parser.add_argument('--file-output', '-o', action='store_true', required=False, dest='out',
                             help='Save the output data to a .txt file')
 
-        parser.add_argument('--version', action='version',
-                            version=f'%(prog)s {__version__}', help='Shows the current version of the program.')
+        parser.add_argument('--verbose', '-v', '-d', '--debug', action='store_true', required=False, dest='verb',
+                            help='It shows in detail the data search process')
 
         self.args = parser.parse_args()
         self.site = 'https://facebook.com/'
@@ -70,6 +70,15 @@ class Fisher:
 
     def get_data(self):
         return self.data
+
+    def upload_txt_file(self):
+        try:
+            with open(self.args.txt, 'r') as file:
+                users_txt = file.readlines()
+        except Exception as error:
+            print(color_text('red', f'An error has occurred: {error}'))
+        else:
+            return users_txt
 
     def run(self):
         if not self.args.browser:
@@ -99,7 +108,7 @@ class Fisher:
                 print('adding pasword...')
                 pwd.send_keys(self.__password__)
             else:
-                print(f'logging into the account: {self.__fake_email__}:{self.__password__}')
+                print(f'logging into the account: {self.__fake_email__}')
                 email.send_keys(self.__fake_email__)
                 pwd.send_keys(self.__password__)
         else:
@@ -109,7 +118,7 @@ class Fisher:
                 print('adding pasword...')
                 pwd.send_keys(self.args.pwd)
             else:
-                print(f'logging into the account: {self.args.email}:{self.args.pwd}')
+                print(f'logging into the account: {self.args.email}')
                 email.send_keys(self.args.email)
                 pwd.send_keys(self.args.pwd)
         ok.click()
@@ -126,8 +135,9 @@ class Fisher:
             for c in classes:
                 try:
                     output = navegador.find_element_by_class_name(c)
-                except:
+                except Exception as error:
                     print(f'[ {color_text("red", "-")} ] class {c} did not return')
+                    print(color_text('red', f'ERROR: {error}'))
                 else:
                     if output:
                         print(f'[ {color_text("blue", "+")} ] collecting data ...')
