@@ -2,14 +2,14 @@
 
 from selenium.webdriver import Firefox, FirefoxOptions
 from time import sleep
-from argparse import ArgumentParser, RawDescriptionHelpFormatter
+from argparse import ArgumentParser, RawDescriptionHelpFormatter, ArgumentError
 from requests import get
 from re import findall
 from form_text import *
 from logo import *
 
 module_name = 'FisherMan: Extract information from facebook profiles'
-__version__ = "1.3"
+__version__ = "2.0"
 
 
 class Fisher:
@@ -19,6 +19,9 @@ class Fisher:
 
         parser.add_argument('USERSNAMES', action='store', nargs='+',
                             help='defines one or more users for the search')
+
+        parser.add_argument('--verbose', '-v', action='store_true', required=False, dest='verb',
+                            help='It shows in detail the data search process')
 
         parser.add_argument('--email', action='store', metavar='EMAIL', dest='email',
                             required=False,
@@ -33,6 +36,12 @@ class Fisher:
         parser.add_argument('--browser', '-b', action='store_true', dest='browser',
                             required=False,
                             help='Opens the browser / bot')
+
+        parser.add_argument('--use-txt', action='store_true', required=False, dest='txt', metavar='FILE',
+                            help='Uses a .txt file to run in the script')
+
+        parser.add_argument('--file-output', '-o', action='store_true', required=False, dest='out',
+                            help='Save the output data to a .txt file')
 
         parser.add_argument('--version', action='version',
                             version=f'%(prog)s {__version__}', help='Shows the current version of the program.')
@@ -64,10 +73,14 @@ class Fisher:
 
     def run(self):
         if not self.args.browser:
+            if self.args.verb:
+                print('Starting in hidden mode')
             options = FirefoxOptions()
             options.add_argument("--headless")
             navegador = Firefox(options=options)
         else:
+            if self.args.verb:
+                print('Opening browser ...')
             navegador = Firefox()
         navegador.get(self.site)
 
@@ -80,15 +93,29 @@ class Fisher:
         email.clear()
         pwd.clear()
         if self.args.email is None or self.args.pwd is None:
-            print(f'logging into the account: {self.__fake_email__}:{self.__password__}')
-            email.send_keys(self.__fake_email__)
-            pwd.send_keys(self.__password__)
+            if self.args.verb:
+                print(f'adding email: {self.__fake_email__}')
+                email.send_keys(self.__fake_email__)
+                print('adding pasword...')
+                pwd.send_keys(self.__password__)
+            else:
+                print(f'logging into the account: {self.__fake_email__}:{self.__password__}')
+                email.send_keys(self.__fake_email__)
+                pwd.send_keys(self.__password__)
         else:
-            print(f'logging into the account: {self.args.email}:{self.args.pwd}')
-            email.send_keys(self.args.email)
-            pwd.send_keys(self.args.pwd)
+            if self.args.verb:
+                print(f'adding email: {self.args.email}')
+                email.send_keys(self.args.email)
+                print('adding pasword...')
+                pwd.send_keys(self.args.pwd)
+            else:
+                print(f'logging into the account: {self.args.email}:{self.args.pwd}')
+                email.send_keys(self.args.email)
+                pwd.send_keys(self.args.pwd)
         ok.click()
         sleep(1)
+        if self.args.verb:
+            print(f'[ {color_text("green", "+")} ] successfully logged in')
         for usr in self.args.USERSNAMES:
             if ' ' in usr:
                 usr = str(usr).replace(' ', '.')
@@ -105,6 +132,8 @@ class Fisher:
                     if output:
                         print(f'[ {color_text("blue", "+")} ] collecting data ...')
                         self.data.append(output.text)
+                        if self.args.verb:
+                            print(output.text)
                     else:
                         continue
                 sleep(1)
