@@ -9,7 +9,7 @@ from form_text import *
 from logo import *
 
 module_name = 'FisherMan: Extract information from facebook profiles'
-__version__ = "1.2"
+__version__ = "1.3"
 
 
 class Fisher:
@@ -42,7 +42,6 @@ class Fisher:
         self.__fake_email__ = 'submarino.sub.aquatico@outlook.com'
         self.__password__ = '0cleptomaniaco0'
         self.data = []
-
         print(color_text('white', name))
 
     @staticmethod
@@ -109,6 +108,7 @@ class Fisher:
                     else:
                         continue
                 sleep(1)
+        navegador.quit()
 
 
 fs = Fisher()
