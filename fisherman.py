@@ -157,5 +157,12 @@ stuff = fs.get_data()
 print()
 print(color_text('green', 'Information found:'))
 print('-' * 60)
-for st in stuff[6:]:
-    print(st)
+if fs.args.out:
+    with open('output.txt', 'w+') as file:
+        for usr in fs.args.USERSNAMES:
+            file.write(usr)
+            for st in stuff[6:]:
+                file.write(st)
+else:
+    for st in stuff[6:]:
+        print(st)
