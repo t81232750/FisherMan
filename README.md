@@ -1,4 +1,4 @@
-# FisherMan [![GitHub license](https://img.shields.io/github/license/Godofcoffe/FisherMan)](https://github.com/Godofcoffe/FisherMan/blob/main/LICENSE) ![badge](https://img.shields.io/badge/version-1.3-blue)  ![badge](https://img.shields.io/badge/python-%3E%3D3.8-green)
+# FisherMan [![GitHub license](https://img.shields.io/github/license/Godofcoffe/FisherMan)](https://github.com/Godofcoffe/FisherMan/blob/main/LICENSE) ![badge](https://img.shields.io/badge/version-2.0-blue)  ![badge](https://img.shields.io/badge/python-%3E%3D3.8-green)
 
 Search for public profile information on Facebook
 
@@ -16,6 +16,7 @@ $ python3 -m pip install -r requirements.txt
 
 ## Usage
 ```
+$ python3 fisherman.py --help
 usage: fisherman.py [-h] [--version] [--email EMAIL] [--password PASSWORD]
                     [--browser] [--use-txt TXT_FILE] [--file-output]
                     [--verbose]
@@ -42,24 +43,24 @@ optional arguments:
                         It shows in detail the data search process
 ```
 To search for a user
-```python3 fisherman.py name.surname name2.surname2 name3.surname3```
+> python3 fisherman.py name.surname name2.surname2 name3.surname3
 
 or 
 
-```python3 fisherman.py name surname name2 surname2 name3 surname 3```
+> python3 fisherman.py name surname name2 surname2 name3 surname 3
 
 the username must be found on the facebook profile link, such as:
 
-https://facebook.com /**name.profile**/
+> https://facebook.com /**name.profile**/
 
 It is also possible to load multiple usernames from a .txt file, it can be useful for a kind of brute force:
 
-```python3 fisherman.py --use-txt filename.txt```
+> python3 fisherman.py --use-txt filename.txt
 
-And with that you can send the output to a txt also using: ```python3 fisheman.py --file-output```
+And with that you can send the output to a txt also using: `python3 fisheman.py --file-output`
 
 Some profiles are limited to displaying your information for any account, so you can use your account to extract.
 Note: this should be used as the last hypothesis and the target profile must be on your friends list:
 
-```python3 fisherman.py --email youremail@email.com --password yourpass```
+> python3 fisherman.py --email youremail@email.com --password yourpass
 ## *This tool only extracts information that is public, not to anything illegal being done that violates German privacy.*
