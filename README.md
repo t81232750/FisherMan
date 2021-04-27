@@ -42,11 +42,11 @@ optional arguments:
                         It shows in detail the data search process
 ```
 To search for a user
-```python3 fisherman.py name.surname```
+```python3 fisherman.py name.surname name2.surname2 name3.surname3```
 
 or 
 
-```python3 fisherman.py name surname```
+```python3 fisherman.py name surname name2 surname2 name3 surname 3```
 
 the username must be found on the facebook profile link, such as:
 
