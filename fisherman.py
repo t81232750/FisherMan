@@ -9,7 +9,7 @@ from form_text import *
 from logo import *
 
 module_name = 'FisherMan: Extract information from facebook profiles'
-__version__ = "1.1"
+__version__ = "1.2"
 
 
 class Fisher:
@@ -17,8 +17,8 @@ class Fisher:
         parser = ArgumentParser(description=f'{module_name} (Version {__version__})',
                                 formatter_class=RawDescriptionHelpFormatter)
 
-        parser.add_argument('users', action='store', nargs='+',
-                            help='defines one or more users for the search', )
+        parser.add_argument('USERSNAMES', action='store', nargs='+',
+                            help='defines one or more users for the search')
 
         parser.add_argument('--email', action='store', metavar='EMAIL', dest='email',
                             required=False,
@@ -39,7 +39,6 @@ class Fisher:
 
         self.args = parser.parse_args()
         self.site = 'https://facebook.com/'
-        self.usrs = self.args.users
         self.__fake_email__ = 'submarino.sub.aquatico@outlook.com'
         self.__password__ = '0cleptomaniaco0'
         self.data = []
@@ -91,19 +90,21 @@ class Fisher:
             pwd.send_keys(self.args.pwd)
         ok.click()
         sleep(1)
-        for usr in self.usrs:
+        for usr in self.args.USERSNAMES:
+            if ' ' in usr:
+                usr = str(usr).replace(' ', '.')
             print(f'Coming in {self.site + usr}')
             navegador.get(f'{self.site + usr}/about')
 
             sleep(3)
             for c in classes:
-                print(f'[ {color_text("blue", "+")} ] collecting data ...')
                 try:
                     output = navegador.find_element_by_class_name(c)
                 except:
                     print(f'[ {color_text("red", "-")} ] class {c} did not return')
                 else:
                     if output:
+                        print(f'[ {color_text("blue", "+")} ] collecting data ...')
                         self.data.append(output.text)
                     else:
                         continue
